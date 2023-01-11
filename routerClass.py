@@ -68,7 +68,7 @@ class Router:
                     self.__update_table(receiver_address, receivers_list)
                     print(f'Unknown address {receiver_address}. Updating the table...')
                 else:
-                    self.__send(receiver_address, message)
+                    self.__send_message(receiver_address, message)
                     print(f'Sending the message to receiver {receiver_address}.')
             except Exception as e:
                 print(f'Unsolved problem: {e}')
@@ -97,7 +97,8 @@ class Router:
         except Exception as e:
             print(f'Problem occurred while updating table: {e}.')
 
-    def __send(self, receiver_address, message):
+    # sending the message to the receiver
+    def __send_message(self, receiver_address, message):
         message_bytes = None
         if type(message) is bytes:
             message_bytes = message
