@@ -1,7 +1,5 @@
-import os
 import queue
 import socket
-import sys
 import threading
 import time
 
@@ -67,13 +65,13 @@ class Router:
                 if receiver_address not in receivers_list:
                     self.__update_table(receiver_address, receivers_list)
                     print(f'Unknown address {receiver_address}. Updating the table...')
-                else:
-                    self.__send_message(receiver_address, message)
-                    print(f'Sending the message to receiver {receiver_address}.')
+                self.__send_message(receiver_address, message)
+                print(f'Sending the message to receiver {receiver_address}.')
             except Exception as e:
                 print(f'Unsolved problem: {e}')
             print(f'Message came from node {_[0]}:{_[1]} with content: '
                   + color.PURPLE + f' {message}. ')
+        print('Stopped listening.')
         print('Stopped listening.')
 
     # sending the unknown address to the Controller,

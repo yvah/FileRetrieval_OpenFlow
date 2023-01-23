@@ -2,52 +2,60 @@ import queue
 import socket
 import threading
 import time
-import uuid
 
 
 class Controller:
 
-    def __init__(self, buffer_size, router_ip, router_port, router_id, receivers_dict: dict,
-                 routers_addresses: list, delay: int = 0.01):
-        self.router_queue = queue.Queue()
-        self.receiver_address = None
+    def __init__(self, ipv4: str, port: int, routers_port: int, delay: float, buffer_size: int,
+                 receivers_dict: dict, routers: list):
+        self.controller_ip: str = ipv4
+        self.controller_port: int = port
+        self.routers_port: int = routers_port
         self.buffer_size = buffer_size
         self.delay = delay
         self.receivers = receivers_dict
-        self.routers = routers_addresses
-        self.router_ip = router_ip
-        self.router_port = router_port
-        self.router_id = router_id
+        self.routers_addresses = routers
 
-        self.router_address_and_port = (router_ip, router_port)
+        # это вообще нужно?
+        # self.router_address_and_port = None
+        # self.router_ip = None
+        # self.router_port = None
+        # self.receiver_address = None
 
+        self.router_queue = queue.Queue()
         self.router_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.router_listen_thread = threading.Thread(target=self.__router_listen)
-        self.router_process_thread = threading.Thread(target=self.__check_table)
+        self.table_check_thread = threading.Thread(target=self.__table_check)
 
     def start(self):
+        # это нужно? вопрос - как подсоединять роутеры, чтобы слушать их
+        for router in self.routers_addresses:
+            self.router_ip, self.router_port = router
+            self.router_address_and_port = (self.router_ip, self.router_port)
         self.router_socket.bind((self.router_ip, self.router_port))
         self.router_listen_thread.start()
-        self.router_process_thread.start()
+        self.table_check_thread.start()
         print(f'Server socket up and listening for clients at {self.router_ip}:{self.router_port}. ')
 
-    # receiving the message from router
+# receiving the message from router
     def __router_listen(self):
         print('Router listener started. ')
         while True:
             try:
                 time.sleep(self.delay)
                 router_buffer, router_address_and_port = self.router_socket.recvfrom(self.buffer_size)
-                self.__check_table(router_buffer)
+                self.__table_check(router_buffer)
             except KeyError:
                 print('KeyError happened. ')
         print('Stopped listening to routers.')
 
-    def __check_table(self, receiver_name, receiver_ip=None, receiver_port=None):
+# checking if the needed receiver is in the dictionary
+    def __table_check(self, receiver_name):
         time.sleep(self.delay)
         try:
-            if self.receivers.__contains__(receiver_name):
+            if receiver_name in self.receivers:
                 self.receiver_address = self.receivers.get(receiver_name)
+                self.__send(self.receiver_address)
             print(f'Receiver address found: {self.receiver_address}.')
         except Exception as e:
             print(f'A problem occurred: {e}.')
@@ -56,8 +64,6 @@ class Controller:
 # sending the needed receiver address from the table to the router that requested it
     def __send(self, buffer: bytes):
         try:
-            receiver_info = self.receiver_address[0] + self.receiver_address[1]
+            self.router_socket.sendto(self.receiver_address, self.router_address_and_port)
         except Exception as e:
             print(f'Problem occurred while getting the receiver address: {e}.')
-        self.
-        self.router_socket.sendto(self.receiver_info, self.router_address_and_port)
