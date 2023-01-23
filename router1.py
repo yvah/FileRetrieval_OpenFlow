@@ -1,10 +1,15 @@
 from routerClass import Router
 
-receivers_file = open('receivers_list.txt', 'r')
-router1 = Router('182.27.0.2', 5012, 0.25, 10240, ('182.27.0.3', 5012), receivers_file)
+router1 = Router('182.27.0.2', 5012, 0.25, 10240, ('182.27.0.3', 5012),
+                 # known receivers:
+                 {1: ('182.25.0.1', 5012),
+                  2: ('182.25.0.2', 5012)})
 router1.start()
 print(router1)
 
 # Controller is on '182.27.0.3', 5012
-# [('182.25.0.1', 5012, 1), ('182.25.0.2', 5012, 2)] - known receivers
-# [('182.25.0.3', 5012, 3), ('182.25.0.4', 5012, 4), ('182.25.0.4', 5012, 5)] - unknown receivers
+# unknown receivers:
+# Receiver3 = '182.25.0.3', 5012
+# Receiver4 = '182.25.0.4', 5012
+# Receiver5 = '182.25.0.5', 5012
+
