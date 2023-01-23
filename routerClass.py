@@ -4,19 +4,6 @@ import threading
 import time
 
 
-class color:
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    DARKCYAN = '\033[36m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    END = '\033[0m'
-
-
 class Router:
 
     def __init__(self, ipv4: str, port: int, delay: float, buffer_size: int, node1: tuple, Controller: tuple, receivers):
@@ -59,20 +46,19 @@ class Router:
             buffer, _ = self.socket.recvfrom(self.buffer_size)
             self.queue.put(buffer)
             # separating the message
-            node_data = buffer.decode("utf-8").split(":")
+            node_data = buffer.decode("utf-8").split("|")
             receiver_address = node_data[0]
             message = node_data[1]
             # checking if the receiver address is in the dictionary of receivers
             try:
+                print(f'Message came from the node {_[0]}:{_[1]}.')
                 if receiver_address not in self.receivers_dict:
                     self.__update_table(receiver_address)
                     print(f'Unknown address {receiver_address}. Updating the table...')
-                self.__send_message(receiver_address, message)
+                self.__send_message(self.receivers_dict.get(receiver_address), message)
                 print(f'Sending the message to receiver {receiver_address}.')
             except Exception as e:
                 print(f'Unsolved problem: {e}')
-            print(f'Message came from node {_[0]}:{_[1]} with content: '
-                  + color.PURPLE + f' {message}. ')
         print('Stopped listening.')
         print('Stopped listening.')
 

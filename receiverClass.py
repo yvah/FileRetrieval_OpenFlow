@@ -4,19 +4,6 @@ import threading
 import time
 
 
-class color:
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    DARKCYAN = '\033[36m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    END = '\033[0m'
-
-
 class Receiver:
 
     def __init__(self, ipv4: str, port: int, delay: float, buffer_size: int, router_ip_and_port: tuple):
@@ -55,6 +42,5 @@ class Receiver:
             buffer, _ = self.socket.recvfrom(self.buffer_size)
             self.queue.put(buffer)
             print('Receiver1 listens to the Router1 on 182.27.0.2:5012')
-            print(f'New message: '
-                  + color.PURPLE + f' {buffer[32:].decode("utf-8")}. ')
+            print(f'New message: {buffer.decode("utf-8")}. ')
         print('Stopped listening. ')

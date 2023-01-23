@@ -1,6 +1,6 @@
 from receiverClass import Receiver
 
-receiver1 = Receiver('182.25.0.4', 5012, 0.25, 10240, ('182.27.0.3', 5012))
+receiver1 = Receiver('182.25.0.4', 16, 0.25, 10240, ('182.27.0.3', 16))
 receiver1.start()
 print(receiver1)
 
