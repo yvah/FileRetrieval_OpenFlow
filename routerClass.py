@@ -19,12 +19,13 @@ class color:
 
 class Router:
 
-    def __init__(self, ipv4: str, port: int, delay: float, buffer_size: int, Controller: tuple, receivers):
+    def __init__(self, ipv4: str, port: int, delay: float, buffer_size: int, node1: tuple, Controller: tuple, receivers):
         self.router_ip: str = ipv4
         self.router_port: int = port
         self.router_ip_and_port: tuple = (ipv4, port)
         self.delay: float = delay
         self.buffer_size: int = buffer_size
+        self.node1 = node1
         self.Controller = Controller
         self.receivers_dict = receivers
         self.receiver_address = None
@@ -58,7 +59,7 @@ class Router:
             buffer, _ = self.socket.recvfrom(self.buffer_size)
             self.queue.put(buffer)
             # separating the message
-            node_data = buffer.decode("utf-8").split("|")
+            node_data = buffer.decode("utf-8").split(":")
             receiver_address = node_data[0]
             message = node_data[1]
             # checking if the receiver address is in the dictionary of receivers
