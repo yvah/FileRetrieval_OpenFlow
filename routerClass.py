@@ -40,7 +40,7 @@ class Router:
     def start(self):
         self.socket.bind(self.router_ip_and_port)
         self.continue_listen = True
-        self.thread_listen = threading.Thread(target=self.__listen(self.receivers_dict))
+        self.thread_listen = threading.Thread(target=self.__listen)
         self.thread_listen.start()
         print(f'Socket up and listening at {self.router_ip}:{self.router_port}.')
 
