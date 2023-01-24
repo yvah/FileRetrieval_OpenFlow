@@ -24,11 +24,9 @@ class Controller:
         self.router_queue = queue.Queue()
         self.router_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.router_listen_thread = threading.Thread(target=self.__router_listen)
-        self.table_check_thread = threading.Thread(target=self.__table_check)
 
     def start(self):
         self.router_listen_thread.start()
-        self.table_check_thread.start()
 
 # receiving the message from router
     def __router_listen(self):

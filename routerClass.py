@@ -67,7 +67,7 @@ class Router:
     # adding the address to table.
     def __update_table(self, receiver_address):
         try:
-            self.socket.sendto(receiver_address, self.Controller)
+            self.socket.sendto(receiver_address, ('182.25.0.5', 16))
             time.sleep(self.delay)
             buffer, _ = self.socket.recvfrom(self.buffer_size)
             self.queue.put(buffer)
