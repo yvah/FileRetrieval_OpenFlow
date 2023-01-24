@@ -17,10 +17,9 @@ class Controller:
         self.routers_addresses = routers
 
         # это вообще нужно?
-        # self.router_address_and_port = None
-        # self.router_ip = None
-        # self.router_port = None
-        # self.receiver_address = None
+        self.router_address_and_port = None
+
+        self.receiver_address = None
 
         self.router_queue = queue.Queue()
         self.router_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -28,18 +27,12 @@ class Controller:
         self.table_check_thread = threading.Thread(target=self.__table_check)
 
     def start(self):
-        # это нужно? вопрос - как подсоединять роутеры, чтобы слушать их
-        for router in self.routers_addresses:
-            self.router_ip, self.router_port = router
-            self.router_address_and_port = (self.router_ip, self.router_port)
-        self.router_socket.bind((self.router_ip, self.router_port))
         self.router_listen_thread.start()
         self.table_check_thread.start()
-        print(f'Server socket up and listening for clients at {self.router_ip}:{self.router_port}. ')
 
 # receiving the message from router
     def __router_listen(self):
-        print('Router listener started. ')
+        print(f'Controller is listening to routers. ')
         while True:
             try:
                 time.sleep(self.delay)
