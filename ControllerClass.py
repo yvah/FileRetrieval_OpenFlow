@@ -16,36 +16,36 @@ class Controller:
         self.receivers = receivers_dict
         self.routers_addresses = routers
 
-        # это вообще нужно?
-        self.router_address_and_port = None
-
-        self.receiver_address = None
-
         self.router_queue = queue.Queue()
         self.router_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.router_listen_thread = threading.Thread(target=self.__router_listen)
 
+        self.table_check_thread = threading.Thread(target=self.__table_check)
+
     def start(self):
         self.router_listen_thread.start()
+        self.table_check_thread.start()
 
-# receiving the message from router
+    # receiving the message from router
     def __router_listen(self):
         print(f'Controller is listening to routers. ')
         while True:
             try:
                 time.sleep(self.delay)
-                router_buffer, router_address_and_port = self.router_socket.recvfrom(self.buffer_size)
-                self.__table_check(router_buffer)
+                self.receiver_name = self.router_socket.recvfrom(self.buffer_size)
+                print(self.receiver_name)
+                self.__table_check()
             except KeyError:
                 print('KeyError happened. ')
         print('Stopped listening to routers.')
 
 # checking if the needed receiver is in the dictionary
-    def __table_check(self, receiver_name):
+    def __table_check(self):
         time.sleep(self.delay)
         try:
-            if receiver_name in self.receivers:
-                self.receiver_address = self.receivers.get(receiver_name)
+            if self.receiver_name in self.receivers:
+                print('looking for receiver in table...')
+                self.receiver_address = self.receivers.get(self.receiver_name)
                 self.__send(self.receiver_address)
             print(f'Receiver address found: {self.receiver_address}.')
         except Exception as e:
@@ -55,6 +55,6 @@ class Controller:
 # sending the needed receiver address from the table to the router that requested it
     def __send(self, buffer: bytes):
         try:
-            self.router_socket.sendto(self.receiver_address, self.router_address_and_port)
+            self.router_socket.sendto(self.receiver_address, self.routers_addresses[0])
         except Exception as e:
             print(f'Problem occurred while getting the receiver address: {e}.')
